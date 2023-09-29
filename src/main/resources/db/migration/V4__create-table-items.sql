@@ -1,4 +1,4 @@
-CREATE TABLE itens (
+CREATE TABLE items (
     id SERIAL NOT NULL PRIMARY KEY,
     nome VARCHAR(50) NOT NULL,
     status BOOLEAN NOT NULL,
