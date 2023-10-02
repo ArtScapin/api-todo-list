@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth->
                         auth.requestMatchers(HttpMethod.POST, "/login").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/user").hasAuthority("ADM")
+                                .requestMatchers(HttpMethod.GET, "/workspace").hasAnyAuthority("ADM", "USER")
                                 .anyRequest().authenticated())
                 .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

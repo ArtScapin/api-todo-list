@@ -25,6 +25,12 @@ public class UserService {
         User user = this.repository.getReferenceById(id);
         return new UserData(user);
     }
+
+    public User findUser(String username){
+        User user = this.repository.findByUsername(username);
+        return user;
+    }
+
     public List<UserData> findAllUsers(){
         return this.repository.findAll().stream().map(UserData::new).toList();
     }
