@@ -1,7 +1,6 @@
 package br.csi.apitodolist.model.user;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,4 +27,6 @@ public class User {
     @NotNull
     private String password;
 
+    @NotNull
+    private String permission;
 }
