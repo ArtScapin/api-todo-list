@@ -23,17 +23,20 @@ public class WorkspaceService {
         this.repository.save(workspace);
     }
 
+    public List<Workspace> findMyWorkspaces(Long userId) {
+        return this.repository.findByUserId(userId);
+    }
+
     public Workspace findWorkspace(Long id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = this.userService.findUser(authentication.getName());
         return this.repository.findByIdAndUserId(id, user.getId());
     }
 
-    public List<Workspace> findMyWorkspaces(Long userId) {
-        return this.repository.findByUserId(userId);
-    }
-
     public void deleteWorkspace(Long id) {
-        this.repository.deleteById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = this.userService.findUser(authentication.getName());
+        Workspace workspace = this.repository.findByIdAndUserId(id, user.getId());
+        this.repository.delete(workspace);
     }
 }
