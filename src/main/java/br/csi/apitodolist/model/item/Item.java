@@ -1,8 +1,6 @@
-package br.csi.apitodolist.model.list;
+package br.csi.apitodolist.model.item;
 
-import br.csi.apitodolist.model.item.Item;
-import br.csi.apitodolist.model.workspace.Workspace;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.csi.apitodolist.model.list.List;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -10,13 +8,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "Lists")
-@Table(name = "lists")
+@Entity(name = "Items")
+@Table(name = "items")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class List {
+public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,10 +26,6 @@ public class List {
     private boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "workspace_id")
-    private Workspace workspace;
-
-    @OneToMany(mappedBy = "list")
-    @JsonIgnore
-    private java.util.List<Item> items;
+    @JoinColumn(name = "list_id")
+    private List list;
 }

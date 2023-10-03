@@ -31,6 +31,8 @@ public class SecurityConfig {
                         auth.requestMatchers(HttpMethod.POST, "/login").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/user").hasAuthority("ADM")
                                 .requestMatchers(HttpMethod.GET, "/workspace").hasAnyAuthority("ADM", "USER")
+                                .requestMatchers(HttpMethod.GET, "/list").hasAnyAuthority("ADM", "USER")
+                                .requestMatchers(HttpMethod.GET, "/item").hasAnyAuthority("ADM", "USER")
                                 .anyRequest().authenticated())
                 .addFilterBefore(this.authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
