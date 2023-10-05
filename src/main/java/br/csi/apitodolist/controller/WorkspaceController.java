@@ -28,8 +28,7 @@ public class WorkspaceController  {
     @PostMapping
     @Transactional
     public ResponseEntity<Workspace> store(@RequestBody Workspace workspace, UriComponentsBuilder uriComponentsBuilder) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        workspace.setUser(this.userService.findUser(authentication.getName()));
+        workspace.setUser(this.userService.getAuthenticatedUser());
         this.service.create(workspace);
         URI uri = uriComponentsBuilder.path("/workspace/{id}").buildAndExpand(workspace.getId()).toUri();
         return ResponseEntity.created(uri).body(workspace);
@@ -37,8 +36,7 @@ public class WorkspaceController  {
 
     @GetMapping
     public List<Workspace> findMyWorkspaces() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = this.userService.findUser(authentication.getName());
+        User user = this.userService.getAuthenticatedUser();
         return this.service.findMyWorkspaces(user.getId());
     }
 

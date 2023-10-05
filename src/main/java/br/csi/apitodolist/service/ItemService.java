@@ -28,14 +28,12 @@ public class ItemService {
     }
 
     public Item findItem(Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = this.userService.findUser(authentication.getName());
+        User user = this.userService.getAuthenticatedUser();
         return this.repository.findByIdAndListWorkspaceUserId(id, user.getId());
     }
 
     public void deleteItem(Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = this.userService.findUser(authentication.getName());
+        User user = this.userService.getAuthenticatedUser();
         Item item = this.repository.findByIdAndListWorkspaceUserId(id, user.getId());
         this.repository.delete(item);
     }

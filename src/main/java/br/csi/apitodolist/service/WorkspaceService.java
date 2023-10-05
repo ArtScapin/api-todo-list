@@ -28,14 +28,12 @@ public class WorkspaceService {
     }
 
     public Workspace findWorkspace(Long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = this.userService.findUser(authentication.getName());
+        User user = this.userService.getAuthenticatedUser();
         return this.repository.findByIdAndUserId(id, user.getId());
     }
 
     public void deleteWorkspace(Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = this.userService.findUser(authentication.getName());
+        User user = this.userService.getAuthenticatedUser();
         Workspace workspace = this.repository.findByIdAndUserId(id, user.getId());
         this.repository.delete(workspace);
     }

@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,27 +24,26 @@ public class UserController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity store(@RequestBody @Valid User user, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<UserData> store(@RequestBody @Valid User user){
         user.setPermission("USER");
         this.service.create(user);
-        URI uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(uri).body(user);
-    }
-
-    @GetMapping("/{id}")
-    public UserData findById(@PathVariable Long id){
-        return this.service.findUser(id);
+        return ResponseEntity.status(201).body(new UserData(user));
     }
 
     @GetMapping("/me")
-    public UserData findById(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = this.service.findUser(authentication.getName());
-        return new UserData(user);
+    public ResponseEntity<UserData> findMyData() {
+        UserData user = new UserData(this.service.getAuthenticatedUser());
+        return ResponseEntity.status(200).body(user);
     }
 
     @GetMapping
-    public List<UserData> findAll(){
-        return this.service.findAllUsers();
+    public ResponseEntity<List<UserData>>findAll(){
+        return ResponseEntity.status(200).body(this.service.findAllUsers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserData> findById(@PathVariable Long id){
+        UserData user = this.service.findUser(id);
+        return ResponseEntity.status(200).body(user);
     }
 }

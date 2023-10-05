@@ -3,6 +3,8 @@ package br.csi.apitodolist.service;
 import br.csi.apitodolist.model.user.User;
 import br.csi.apitodolist.model.user.UserData;
 import br.csi.apitodolist.model.user.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +28,14 @@ public class UserService {
         return new UserData(user);
     }
 
-    public User findUser(String username){
+    public UserData findUser(String username){
         User user = this.repository.findByUsername(username);
+        return new UserData(user);
+    }
+
+    public User getAuthenticatedUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = this.repository.findByUsername(authentication.getName());
         return user;
     }
 
