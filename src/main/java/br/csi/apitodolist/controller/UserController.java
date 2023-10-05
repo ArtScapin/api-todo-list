@@ -24,6 +24,7 @@ public class UserController {
     @PostMapping
     @Transactional
     public ResponseEntity store(@RequestBody @Valid User user, UriComponentsBuilder uriComponentsBuilder){
+        user.setPermission("USER");
         this.service.create(user);
         URI uri = uriComponentsBuilder.path("/user/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).body(user);
