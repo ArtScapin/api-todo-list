@@ -6,10 +6,7 @@ import br.csi.apitodolist.service.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -30,10 +27,30 @@ public class UserController {
         return ResponseEntity.status(201).body(new UserData(user));
     }
 
+    @PutMapping
+    @Transactional
+    public ResponseEntity<UserData> update(@RequestBody User user){
+        UserData userData = this.service.update(user);
+        return ResponseEntity.status(200).body(userData);
+    }
+
+    @DeleteMapping
+    public ResponseEntity delete() {
+        this.service.delete();
+        return ResponseEntity.status(200).build();
+    }
+
     @GetMapping("/me")
     public ResponseEntity<UserData> findMyData() {
         UserData user = new UserData(this.service.getAuthenticatedUser());
         return ResponseEntity.status(200).body(user);
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<UserData> updatePermission(@PathVariable Long id){
+        UserData userData = this.service.updatePermission(id);
+        return ResponseEntity.status(200).body(userData);
     }
 
     @GetMapping

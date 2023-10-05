@@ -28,11 +28,6 @@ public class UserService {
         return new UserData(user);
     }
 
-    public UserData findUser(String username){
-        User user = this.repository.findByUsername(username);
-        return new UserData(user);
-    }
-
     public User getAuthenticatedUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = this.repository.findByUsername(authentication.getName());
@@ -41,5 +36,23 @@ public class UserService {
 
     public List<UserData> findAllUsers(){
         return this.repository.findAll().stream().map(UserData::new).toList();
+    }
+
+    public UserData update(User user) {
+        User authUser = this.getAuthenticatedUser();
+        authUser.setName(user.getName());
+        this.repository.save(authUser);
+        return new UserData(authUser);
+    }
+
+    public void delete() {
+        User user = this.getAuthenticatedUser();
+        this.repository.delete(user);
+    }
+
+    public UserData updatePermission(Long id) {
+        User user = this.repository.findById(id).orElse(null);
+        user.setPermission("ADM");
+        return new UserData(user);
     }
 }
