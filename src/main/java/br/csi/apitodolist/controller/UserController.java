@@ -37,7 +37,7 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity delete() {
         this.service.delete();
-        return ResponseEntity.status(200).build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")
