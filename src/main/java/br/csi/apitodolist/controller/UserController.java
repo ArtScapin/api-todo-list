@@ -6,6 +6,8 @@ import br.csi.apitodolist.service.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,6 +35,13 @@ public class UserController {
     @GetMapping("/{id}")
     public UserData findById(@PathVariable Long id){
         return this.service.findUser(id);
+    }
+
+    @GetMapping("/me")
+    public UserData findById(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = this.service.findUser(authentication.getName());
+        return new UserData(user);
     }
 
     @GetMapping
