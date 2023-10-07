@@ -25,7 +25,7 @@ public class ItemController {
         List list = listService.findList(id);
         if (list != null) {
             item.setList(list);
-            item.setStatus(true);
+            item.setStatus(false);
             this.service.create(item);
             return ResponseEntity.status(200).body(item);
         }

@@ -25,7 +25,7 @@ public class ListController {
         Workspace workspace = workspaceService.findWorkspace(id);
         if (workspace != null) {
             list.setWorkspace(workspace);
-            list.setStatus(false);
+            list.setStatus(true);
             this.service.create(list);
             return ResponseEntity.status(201).body(list);
         }
