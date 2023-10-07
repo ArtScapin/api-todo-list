@@ -40,7 +40,12 @@ public class UserService {
 
     public UserData update(User user) {
         User authUser = this.getAuthenticatedUser();
-        authUser.setName(user.getName());
+        if(user.getName() != null) {
+            authUser.setName(user.getName());
+        }
+        if(user.getPassword() != null) {
+            authUser.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        }
         this.repository.save(authUser);
         return new UserData(authUser);
     }
