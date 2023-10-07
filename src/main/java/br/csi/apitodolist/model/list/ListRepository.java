@@ -1,6 +1,5 @@
 package br.csi.apitodolist.model.list;
 
-import br.csi.apitodolist.model.workspace.Workspace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ListRepository extends JpaRepository<List, Long> {

@@ -27,7 +27,6 @@ public class ItemService {
         this.listRepository.save(list);
     }
 
-
     public Item update(Item itemData, Long id) {
         User user = this.userService.getAuthenticatedUser();
         Item item = this.repository.findByIdAndListWorkspaceUserId(id, user.getId());
