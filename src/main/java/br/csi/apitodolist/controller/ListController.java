@@ -7,9 +7,6 @@ import br.csi.apitodolist.service.WorkspaceService;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
 
 @RestController
 @RequestMapping("/list")
@@ -24,32 +21,38 @@ public class ListController {
 
     @PostMapping("/{id}")
     @Transactional
-    public ResponseEntity<List> store(@PathVariable Long id, @RequestBody List list, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<List> store(@PathVariable Long id, @RequestBody List list) {
         Workspace workspace = workspaceService.findWorkspace(id);
         if (workspace != null) {
             list.setWorkspace(workspace);
             list.setStatus(false);
             this.service.create(list);
-            URI uri = uriComponentsBuilder.path("/list/{id}").buildAndExpand(workspace.getId()).toUri();
-            return ResponseEntity.created(uri).body(list);
+            return ResponseEntity.status(201).body(list);
         }
         return ResponseEntity.notFound().build();
     }
 
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<List> update(@PathVariable Long id, @RequestBody List list) {
+        this.service.update(list, id);
+        return ResponseEntity.status(201).body(list);
+    }
+
     @GetMapping("/all/{id}")
-    public java.util.List<List> findListsByWorkspace(@PathVariable Long id) {
+    public ResponseEntity<java.util.List<List>> findListsByWorkspace(@PathVariable Long id) {
         Workspace workspace = workspaceService.findWorkspace(id);
-        return this.service.findListsByWorkspace(workspace.getId());
+        return ResponseEntity.status(200).body(this.service.findListsByWorkspace(workspace.getId()));
     }
 
     @GetMapping("/{id}")
-    public List findById(@PathVariable Long id){
-        return this.service.findList(id);
+    public ResponseEntity<List> findById(@PathVariable Long id){
+        return ResponseEntity.status(200).body(this.service.findList(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteById(@PathVariable Long id){
-        this.service.deleteList(id);
+        this.service.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -3,8 +3,6 @@ package br.csi.apitodolist.service;
 import br.csi.apitodolist.model.list.List;
 import br.csi.apitodolist.model.list.ListRepository;
 import br.csi.apitodolist.model.user.User;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +27,13 @@ public class ListService {
         return this.repository.findByIdAndWorkspaceUserId(id, user.getId());
     }
 
-    public void deleteList(Long id) {
+    public void update(List listData, Long id) {
+        User user = this.userService.getAuthenticatedUser();
+        List list = this.repository.findByIdAndWorkspaceUserId(id, user.getId());
+        list.setName(listData.getName());
+    }
+
+    public void delete(Long id) {
         User user = this.userService.getAuthenticatedUser();
         List list = this.repository.findByIdAndWorkspaceUserId(id, user.getId());
         this.repository.delete(list);
