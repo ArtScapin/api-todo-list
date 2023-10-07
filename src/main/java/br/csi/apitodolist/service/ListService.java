@@ -27,10 +27,12 @@ public class ListService {
         return this.repository.findByIdAndWorkspaceUserId(id, user.getId());
     }
 
-    public void update(List listData, Long id) {
+    public List update(List listData, Long id) {
         User user = this.userService.getAuthenticatedUser();
         List list = this.repository.findByIdAndWorkspaceUserId(id, user.getId());
         list.setName(listData.getName());
+        this.repository.save(list);
+        return list;
     }
 
     public void delete(Long id) {
