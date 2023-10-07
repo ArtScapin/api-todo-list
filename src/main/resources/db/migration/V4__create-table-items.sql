@@ -3,5 +3,5 @@ CREATE TABLE items (
     name VARCHAR(50) NOT NULL,
     status BOOLEAN NOT NULL,
     list_id INT NOT NULL,
-    FOREIGN KEY (list_id) REFERENCES lists(id)
+    FOREIGN KEY (list_id) REFERENCES lists(id) ON DELETE CASCADE
 )

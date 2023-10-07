@@ -3,5 +3,5 @@ CREATE TABLE lists (
     name VARCHAR(50) NOT NULL,
     status BOOLEAN NOT NULL,
     workspace_id INT NOT NULL,
-    FOREIGN KEY (workspace_id) REFERENCES workspaces(id)
+    FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE
 )
