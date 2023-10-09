@@ -2,6 +2,7 @@ package br.csi.apitodolist.service;
 
 import br.csi.apitodolist.model.user.User;
 import br.csi.apitodolist.model.workspace.Workspace;
+import br.csi.apitodolist.model.workspace.WorkspaceData;
 import br.csi.apitodolist.model.workspace.WorkspaceRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,9 @@ public class WorkspaceService {
         this.repository.save(workspace);
     }
 
-    public List<Workspace> findMyWorkspaces() {
+    public List<WorkspaceData> findMyWorkspaces() {
         User user = this.userService.getAuthenticatedUser();
-        return this.repository.findByUserId(user.getId());
+        return this.repository.findByUserId(user.getId()).stream().map(WorkspaceData::new).toList();
     }
 
     public Workspace findWorkspace(Long id){
