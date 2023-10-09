@@ -1,6 +1,7 @@
 package br.csi.apitodolist.service;
 
 import br.csi.apitodolist.model.list.List;
+import br.csi.apitodolist.model.list.ListData;
 import br.csi.apitodolist.model.list.ListRepository;
 import br.csi.apitodolist.model.user.User;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,8 @@ public class ListService {
         this.repository.save(list);
     }
 
-    public java.util.List<List> findListsByWorkspace(Long workspaceId) {
-        return this.repository.findByWorkspaceId(workspaceId);
+    public java.util.List<ListData> findListsByWorkspace(Long workspaceId) {
+        return this.repository.findByWorkspaceId(workspaceId).stream().map(ListData::new).toList();
     }
     public List findList(Long id) {
         User user = this.userService.getAuthenticatedUser();
