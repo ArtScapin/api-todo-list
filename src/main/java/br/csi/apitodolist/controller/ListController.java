@@ -38,7 +38,7 @@ public class ListController {
     @Transactional
     public ResponseEntity<ListData> update(@PathVariable Long id, @RequestBody List list) {
         ListData listData = new ListData(this.service.update(list, id));
-        return ResponseEntity.status(201).body(listData);
+        return ResponseEntity.status(200).body(listData);
     }
 
     @GetMapping("/all/{id}")
