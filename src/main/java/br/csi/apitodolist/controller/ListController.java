@@ -28,7 +28,8 @@ public class ListController {
             list.setWorkspace(workspace);
             list.setStatus(true);
             this.service.create(list);
-            return ResponseEntity.status(201).body(new ListData(list));
+            ListData listData = new ListData(list);
+            return ResponseEntity.status(201).body(listData);
         }
         return ResponseEntity.notFound().build();
     }
@@ -36,18 +37,23 @@ public class ListController {
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<ListData> update(@PathVariable Long id, @RequestBody List list) {
-        return ResponseEntity.status(201).body(new ListData(this.service.update(list, id)));
+        ListData listData = new ListData(this.service.update(list, id));
+        return ResponseEntity.status(201).body(listData);
     }
 
     @GetMapping("/all/{id}")
     public ResponseEntity<java.util.List<ListData>> findListsByWorkspace(@PathVariable Long id) {
         Workspace workspace = workspaceService.findWorkspace(id);
-        return ResponseEntity.status(200).body(this.service.findListsByWorkspace(workspace.getId()));
+        java.util.List<List> lists = this.service.findListsByWorkspace(workspace.getId());
+        java.util.List<ListData> listsData = lists.stream().map(ListData::new).toList();
+        return ResponseEntity.status(200).body(listsData);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ListData> findById(@PathVariable Long id){
-        return ResponseEntity.status(200).body(new ListData(this.service.findList(id)));
+        List list = this.service.findList(id);
+        ListData listData = new ListData(list);
+        return ResponseEntity.status(200).body(listData);
     }
 
     @DeleteMapping("/{id}")

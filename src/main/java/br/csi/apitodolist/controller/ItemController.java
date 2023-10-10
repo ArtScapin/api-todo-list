@@ -3,7 +3,6 @@ package br.csi.apitodolist.controller;
 import br.csi.apitodolist.model.item.Item;
 import br.csi.apitodolist.model.item.ItemData;
 import br.csi.apitodolist.model.list.List;
-import br.csi.apitodolist.model.workspace.WorkspaceData;
 import br.csi.apitodolist.service.ItemService;
 import br.csi.apitodolist.service.ListService;
 import jakarta.transaction.Transactional;
@@ -29,7 +28,8 @@ public class ItemController {
             item.setList(list);
             item.setStatus(false);
             this.service.create(item);
-            return ResponseEntity.status(200).body(new ItemData(item));
+            ItemData itemData = new ItemData(item);
+            return ResponseEntity.status(200).body(itemData);
         }
         return ResponseEntity.notFound().build();
     }
@@ -37,25 +37,31 @@ public class ItemController {
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<ItemData> update(@PathVariable Long id, @RequestBody Item item) {
-        return ResponseEntity.status(200).body(new ItemData(this.service.update(item, id)));
+        ItemData itemData = new ItemData(this.service.update(item, id));
+        return ResponseEntity.status(200).body(itemData);
     }
 
     @PutMapping("/change-status/{id}")
     @Transactional
     public ResponseEntity<ItemData> changeStatus(@PathVariable Long id) {
-        return ResponseEntity.status(200).body(new ItemData(this.service.changeStatus(id)));
+        Item item = this.service.changeStatus(id);
+        ItemData itemData = new ItemData(item);
+        return ResponseEntity.status(200).body(itemData);
     }
 
     @GetMapping("/all/{id}")
     public ResponseEntity<java.util.List<ItemData>> findItemsByList(@PathVariable Long id) {
         List list = listService.findList(id);
         java.util.List<Item> items = this.service.findItemsByList(list.getId());
-        return ResponseEntity.status(200).body(items.stream().map(ItemData::new).toList());
+        java.util.List<ItemData> itemsData = items.stream().map(ItemData::new).toList();
+        return ResponseEntity.status(200).body(itemsData);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ItemData> findById(@PathVariable Long id){
-        return ResponseEntity.status(200).body(new ItemData(this.service.findItem(id)));
+        Item item = this.service.findItem(id);
+        ItemData itemData = new ItemData(item);
+        return ResponseEntity.status(200).body(itemData);
     }
 
     @DeleteMapping("/{id}")

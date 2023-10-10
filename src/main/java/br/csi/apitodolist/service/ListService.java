@@ -20,8 +20,8 @@ public class ListService {
         this.repository.save(list);
     }
 
-    public java.util.List<ListData> findListsByWorkspace(Long workspaceId) {
-        return this.repository.findByWorkspaceId(workspaceId).stream().map(ListData::new).toList();
+    public java.util.List<List> findListsByWorkspace(Long workspaceId) {
+        return this.repository.findByWorkspaceId(workspaceId);
     }
     public List findList(Long id) {
         User user = this.userService.getAuthenticatedUser();

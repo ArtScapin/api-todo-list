@@ -22,9 +22,9 @@ public class WorkspaceService {
         this.repository.save(workspace);
     }
 
-    public List<WorkspaceData> findMyWorkspaces() {
+    public List<Workspace> findMyWorkspaces() {
         User user = this.userService.getAuthenticatedUser();
-        return this.repository.findByUserId(user.getId()).stream().map(WorkspaceData::new).toList();
+        return this.repository.findByUserId(user.getId());
     }
 
     public Workspace findWorkspace(Long id){

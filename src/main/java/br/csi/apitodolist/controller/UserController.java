@@ -24,7 +24,8 @@ public class UserController {
     public ResponseEntity<UserData> store(@RequestBody @Valid User user){
         user.setPermission("USER");
         this.service.create(user);
-        return ResponseEntity.status(201).body(new UserData(user));
+        UserData userData = new UserData(user);
+        return ResponseEntity.status(201).body(userData);
     }
 
     @PutMapping
@@ -49,13 +50,15 @@ public class UserController {
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<UserData> updatePermission(@PathVariable Long id){
-        UserData userData = this.service.updatePermission(id);
-        return ResponseEntity.status(200).body(userData);
+        UserData user = this.service.updatePermission(id);
+        return ResponseEntity.status(200).body(user);
     }
 
     @GetMapping
     public ResponseEntity<List<UserData>>findAll(){
-        return ResponseEntity.status(200).body(this.service.findAllUsers());
+        List<User> users = this.service.findAllUsers();
+        List<UserData> usersData = users.stream().map(UserData::new).toList();
+        return ResponseEntity.status(200).body(usersData);
     }
 
     @GetMapping("/{id}")

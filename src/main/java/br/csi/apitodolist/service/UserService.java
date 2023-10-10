@@ -34,8 +34,8 @@ public class UserService {
         return user;
     }
 
-    public List<UserData> findAllUsers(){
-        return this.repository.findAll().stream().map(UserData::new).toList();
+    public List<User> findAllUsers(){
+        return this.repository.findAll();
     }
 
     public UserData update(User user) {
