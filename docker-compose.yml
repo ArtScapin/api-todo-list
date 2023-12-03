@@ -1,0 +1,42 @@
+version: '3'
+# docker-compose -p "apitodolist" up -d
+services:
+  api-todo-list:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      PostgresSQL:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - rede
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://PostgresSQL:5432/todolist
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=1909
+  PostgresSQL:
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_PASSWORD=1909
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=todolist
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - rede
+    volumes:
+      - pg-data:/docker-entrypoint-initdb.d
+
+volumes:
+  pg-data:
+networks:
+  rede:
+    driver: bridge
