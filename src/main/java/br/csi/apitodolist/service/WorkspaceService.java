@@ -2,6 +2,7 @@ package br.csi.apitodolist.service;
 
 import br.csi.apitodolist.model.user.User;
 import br.csi.apitodolist.model.workspace.Workspace;
+import br.csi.apitodolist.model.workspace.WorkspaceData;
 import br.csi.apitodolist.model.workspace.WorkspaceRepository;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,7 @@
 package br.csi.apitodolist.controller;
 
 import br.csi.apitodolist.model.workspace.Workspace;
+import br.csi.apitodolist.model.workspace.WorkspaceData;
 import br.csi.apitodolist.service.UserService;
 import br.csi.apitodolist.service.WorkspaceService;
 import jakarta.transaction.Transactional;
@@ -22,26 +23,32 @@ public class WorkspaceController  {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Workspace> store(@RequestBody @Valid Workspace workspace) {
+    public ResponseEntity<WorkspaceData> store(@RequestBody @Valid Workspace workspace) {
         workspace.setUser(this.userService.getAuthenticatedUser());
         this.service.create(workspace);
-        return ResponseEntity.status(201).body(workspace);
+        WorkspaceData workspaceData = new WorkspaceData(workspace);
+        return ResponseEntity.status(201).body(workspaceData);
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Workspace> update(@PathVariable Long id, @RequestBody @Valid Workspace workspace) {
-        return ResponseEntity.status(200).body(this.service.update(workspace, id));
+    public ResponseEntity<WorkspaceData> update(@PathVariable Long id, @RequestBody @Valid Workspace workspace) {
+        WorkspaceData workspaceData = new WorkspaceData(this.service.update(workspace, id));
+        return ResponseEntity.status(200).body(workspaceData);
     }
 
     @GetMapping
-    public ResponseEntity<List<Workspace>> findMyWorkspaces() {
-        return ResponseEntity.status(200).body(this.service.findMyWorkspaces());
+    public ResponseEntity<List<WorkspaceData>> findMyWorkspaces() {
+        List<Workspace> workspaces = this.service.findMyWorkspaces();
+        List<WorkspaceData> workspacesData = workspaces.stream().map(WorkspaceData::new).toList();
+        return ResponseEntity.status(200).body(workspacesData);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Workspace> findById(@PathVariable Long id){
-        return ResponseEntity.status(200).body(this.service.findWorkspace(id));
+    public ResponseEntity<WorkspaceData> findById(@PathVariable Long id){
+        Workspace workspace = this.service.findWorkspace(id);
+        WorkspaceData workspaceData = new WorkspaceData(workspace);
+        return ResponseEntity.status(200).body(workspaceData);
     }
 
     @DeleteMapping("/{id}")

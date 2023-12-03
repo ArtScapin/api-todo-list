@@ -1,6 +1,7 @@
 package br.csi.apitodolist.service;
 
 import br.csi.apitodolist.model.list.List;
+import br.csi.apitodolist.model.list.ListData;
 import br.csi.apitodolist.model.list.ListRepository;
 import br.csi.apitodolist.model.user.User;
 import org.springframework.stereotype.Service;
