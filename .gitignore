@@ -1,8 +1,8 @@
 HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+api-todo-list/target/
+api-todo-list/!.mvn/wrapper/maven-wrapper.jar
+api-todo-list/!**/src/main/**/target/
+api-todo-list/!**/src/test/**/target/
 
 ### STS ###
 .apt_generated
@@ -19,15 +19,3 @@ target/
 *.iml
 *.ipr
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
