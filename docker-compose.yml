@@ -1,9 +1,9 @@
 version: '3'
-# docker-compose -p "apitodolist" up -d
+# docker-compose -p "todolist" up -d
 services:
   api-todo-list:
     build:
-      context: .
+      context: api-todo-list
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -16,13 +16,13 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://PostgresSQL:5432/todolist
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=1909
+      - SPRING_DATASOURCE_PASSWORD=1234
   PostgresSQL:
     image: postgres
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_PASSWORD=1909
+      - POSTGRES_PASSWORD=1234
       - POSTGRES_USER=postgres
       - POSTGRES_DB=todolist
     healthcheck:
