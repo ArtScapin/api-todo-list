@@ -24,6 +24,7 @@ public class UserController {
     public ResponseEntity<UserData> store(@RequestBody @Valid User user){
         user.setPermission("USER");
         this.service.create(user);
+        user.notifyLoggers("User " + user.getUsername() + " created");
         return ResponseEntity.status(201).body(new UserData(user));
     }
 
@@ -31,6 +32,7 @@ public class UserController {
     @Transactional
     public ResponseEntity<UserData> update(@RequestBody User user){
         UserData userData = this.service.update(user);
+        user.notifyLoggers("User " + user.getUsername() + " updated");
         return ResponseEntity.status(200).body(userData);
     }
 
