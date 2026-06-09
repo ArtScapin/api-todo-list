@@ -27,6 +27,11 @@ public class List {
     @NotNull
     private boolean status;
 
+    @NotNull
+    private Integer position = 0;
+
+    private String color;
+
     @ManyToOne
     @JoinColumn(name = "workspace_id")
     private Workspace workspace;

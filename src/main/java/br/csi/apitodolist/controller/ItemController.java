@@ -1,6 +1,7 @@
 package br.csi.apitodolist.controller;
 
 import br.csi.apitodolist.model.item.Item;
+import br.csi.apitodolist.model.item.ItemMoveData;
 import br.csi.apitodolist.model.list.List;
 import br.csi.apitodolist.service.ItemService;
 import br.csi.apitodolist.service.ListService;
@@ -36,6 +37,12 @@ public class ItemController {
     @Transactional
     public ResponseEntity<Item> update(@PathVariable Long id, @RequestBody Item item) {
         return ResponseEntity.status(200).body(this.service.update(item, id));
+    }
+
+    @PatchMapping("/{id}/move")
+    @Transactional
+    public ResponseEntity<Item> move(@PathVariable Long id, @RequestBody ItemMoveData moveData) {
+        return ResponseEntity.status(200).body(this.service.move(id, moveData));
     }
 
     @PutMapping("/change-status/{id}")

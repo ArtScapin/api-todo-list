@@ -6,6 +6,6 @@ import java.util.List;
 
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findByListId(Long listId);
+    List<Item> findByListIdOrderByPositionAsc(Long listId);
     Item findByIdAndListWorkspaceUserId(Long id, Long userId);
 }

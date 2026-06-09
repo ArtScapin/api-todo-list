@@ -16,11 +16,14 @@ public class ListService {
     }
 
     public void create(List list) {
+        if (list.getPosition() == null) {
+            list.setPosition(0);
+        }
         this.repository.save(list);
     }
 
     public java.util.List<List> findListsByWorkspace(Long workspaceId) {
-        return this.repository.findByWorkspaceId(workspaceId);
+        return this.repository.findByWorkspaceIdOrderByPositionAsc(workspaceId);
     }
     public List findList(Long id) {
         User user = this.userService.getAuthenticatedUser();
@@ -30,7 +33,13 @@ public class ListService {
     public List update(List listData, Long id) {
         User user = this.userService.getAuthenticatedUser();
         List list = this.repository.findByIdAndWorkspaceUserId(id, user.getId());
-        list.setName(listData.getName());
+        if (listData.getName() != null) {
+            list.setName(listData.getName());
+        }
+        if (listData.getPosition() != null) {
+            list.setPosition(listData.getPosition());
+        }
+        list.setColor(listData.getColor());
         this.repository.save(list);
         return list;
     }
