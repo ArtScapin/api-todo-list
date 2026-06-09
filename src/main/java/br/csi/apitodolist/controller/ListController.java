@@ -5,6 +5,7 @@ import br.csi.apitodolist.model.workspace.Workspace;
 import br.csi.apitodolist.service.ListService;
 import br.csi.apitodolist.service.WorkspaceService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class ListController {
 
     @PostMapping("/{id}")
     @Transactional
-    public ResponseEntity<List> store(@PathVariable Long id, @RequestBody List list) {
+    public ResponseEntity<List> store(@PathVariable Long id, @RequestBody @Valid List list) {
         Workspace workspace = workspaceService.findWorkspace(id);
         if (workspace != null) {
             list.setWorkspace(workspace);
@@ -34,7 +35,7 @@ public class ListController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<List> update(@PathVariable Long id, @RequestBody List list) {
+    public ResponseEntity<List> update(@PathVariable Long id, @RequestBody @Valid List list) {
         return ResponseEntity.status(201).body(this.service.update(list, id));
     }
 

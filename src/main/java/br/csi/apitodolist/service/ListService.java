@@ -16,9 +16,6 @@ public class ListService {
     }
 
     public void create(List list) {
-        if (list.getPosition() == null) {
-            list.setPosition(0);
-        }
         this.repository.save(list);
     }
 
@@ -33,12 +30,8 @@ public class ListService {
     public List update(List listData, Long id) {
         User user = this.userService.getAuthenticatedUser();
         List list = this.repository.findByIdAndWorkspaceUserId(id, user.getId());
-        if (listData.getName() != null) {
-            list.setName(listData.getName());
-        }
-        if (listData.getPosition() != null) {
-            list.setPosition(listData.getPosition());
-        }
+        list.setName(listData.getName());
+        list.setPosition(listData.getPosition());
         list.setColor(listData.getColor());
         this.repository.save(list);
         return list;

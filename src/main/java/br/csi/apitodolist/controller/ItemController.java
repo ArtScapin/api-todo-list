@@ -6,6 +6,7 @@ import br.csi.apitodolist.model.list.List;
 import br.csi.apitodolist.service.ItemService;
 import br.csi.apitodolist.service.ListService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class ItemController {
 
     @PostMapping("/{id}")
     @Transactional
-    public ResponseEntity<Item> store(@PathVariable Long id, @RequestBody Item item) {
+    public ResponseEntity<Item> store(@PathVariable Long id, @RequestBody @Valid Item item) {
         List list = listService.findList(id);
         if (list != null) {
             item.setList(list);
@@ -35,13 +36,13 @@ public class ItemController {
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Item> update(@PathVariable Long id, @RequestBody Item item) {
+    public ResponseEntity<Item> update(@PathVariable Long id, @RequestBody @Valid Item item) {
         return ResponseEntity.status(200).body(this.service.update(item, id));
     }
 
     @PatchMapping("/{id}/move")
     @Transactional
-    public ResponseEntity<Item> move(@PathVariable Long id, @RequestBody ItemMoveData moveData) {
+    public ResponseEntity<Item> move(@PathVariable Long id, @RequestBody @Valid ItemMoveData moveData) {
         return ResponseEntity.status(200).body(this.service.move(id, moveData));
     }
 

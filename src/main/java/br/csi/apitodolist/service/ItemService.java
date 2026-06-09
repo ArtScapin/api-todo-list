@@ -3,7 +3,6 @@ package br.csi.apitodolist.service;
 import br.csi.apitodolist.model.item.Item;
 import br.csi.apitodolist.model.item.ItemMoveData;
 import br.csi.apitodolist.model.item.ItemRepository;
-import br.csi.apitodolist.model.item.Priority;
 import br.csi.apitodolist.model.list.ListRepository;
 import br.csi.apitodolist.model.user.User;
 import br.csi.apitodolist.model.user.UserRepository;
@@ -26,12 +25,6 @@ public class ItemService {
     }
 
     public void create(Item item) {
-        if (item.getPriority() == null) {
-            item.setPriority(Priority.MEDIUM);
-        }
-        if (item.getPosition() == null) {
-            item.setPosition(0);
-        }
         item.setAssignee(this.resolveAssignee(item));
         this.repository.save(item);
         br.csi.apitodolist.model.list.List list = item.getList();
@@ -42,16 +35,10 @@ public class ItemService {
     public Item update(Item itemData, Long id) {
         User user = this.userService.getAuthenticatedUser();
         Item item = this.repository.findByIdAndListWorkspaceUserId(id, user.getId());
-        if (itemData.getName() != null) {
-            item.setName(itemData.getName());
-        }
+        item.setName(itemData.getName());
         item.setDescription(itemData.getDescription());
-        if (itemData.getPriority() != null) {
-            item.setPriority(itemData.getPriority());
-        }
-        if (itemData.getPosition() != null) {
-            item.setPosition(itemData.getPosition());
-        }
+        item.setPriority(itemData.getPriority());
+        item.setPosition(itemData.getPosition());
         if (itemData.getAssignee() != null) {
             item.setAssignee(this.resolveAssignee(itemData));
         }
@@ -68,9 +55,7 @@ public class ItemService {
         Item item = this.repository.findByIdAndListWorkspaceUserId(id, user.getId());
         br.csi.apitodolist.model.list.List list = this.listRepository.findByIdAndWorkspaceUserId(moveData.listId(), user.getId());
         item.setList(list);
-        if (moveData.position() != null) {
-            item.setPosition(moveData.position());
-        }
+        item.setPosition(moveData.position());
         this.repository.save(item);
         return item;
     }
