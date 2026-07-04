@@ -35,10 +35,10 @@ public class AuthenticationController {
             Authentication at = authenticationManager.authenticate(authentication);
 
             User user = (User) at.getPrincipal();
-            String accessToken = this.tokenServiceJWT.getAccessToken(user);
+            String token = this.tokenServiceJWT.getAccessToken(user);
             String refreshToken = this.tokenServiceJWT.getRefreshToken(user);
 
-            return ResponseEntity.ok().body(new TokenJWTData(accessToken, refreshToken));
+            return ResponseEntity.ok().body(new TokenJWTData(token, refreshToken));
         } catch (Exception error) {
             error.printStackTrace();
             return ResponseEntity.badRequest().body(error.getMessage());
@@ -51,10 +51,10 @@ public class AuthenticationController {
             String subject = this.tokenServiceJWT.getRefreshTokenSubject(refreshTokenData.refreshToken());
             User user = (User) this.authenticationService.loadUserByUsername(subject);
 
-            String accessToken = this.tokenServiceJWT.getAccessToken(user);
+            String token = this.tokenServiceJWT.getAccessToken(user);
             String refreshToken = this.tokenServiceJWT.getRefreshToken(user);
 
-            return ResponseEntity.ok().body(new TokenJWTData(accessToken, refreshToken));
+            return ResponseEntity.ok().body(new TokenJWTData(token, refreshToken));
         } catch (Exception error) {
             error.printStackTrace();
             return ResponseEntity.badRequest().body(error.getMessage());
@@ -65,5 +65,5 @@ public class AuthenticationController {
 
     private record RefreshTokenData(String refreshToken) {}
 
-    private record TokenJWTData (String accessToken, String refreshToken) {}
+    private record TokenJWTData (String token, String refreshToken) {}
 }
