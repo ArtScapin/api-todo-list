@@ -1,6 +1,7 @@
 package br.csi.apitodolist.controller;
 
 import br.csi.apitodolist.infra.security.TokenServiceJWT;
+import br.csi.apitodolist.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,10 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final TokenServiceJWT tokenServiceJWT;
+    private final AuthenticationService authenticationService;
 
-    public AuthenticationController(AuthenticationManager authenticationManager, TokenServiceJWT tokenServiceJWT) {
+    public AuthenticationController(AuthenticationManager authenticationManager,
+                                    TokenServiceJWT tokenServiceJWT,
+                                    AuthenticationService authenticationService) {
         this.authenticationManager = authenticationManager;
         this.tokenServiceJWT = tokenServiceJWT;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping
@@ -30,9 +35,26 @@ public class AuthenticationController {
             Authentication at = authenticationManager.authenticate(authentication);
 
             User user = (User) at.getPrincipal();
-            String token = this.tokenServiceJWT.getToken(user);
+            String accessToken = this.tokenServiceJWT.getAccessToken(user);
+            String refreshToken = this.tokenServiceJWT.getRefreshToken(user);
 
-            return ResponseEntity.ok().body(new TokenJWTData(token));
+            return ResponseEntity.ok().body(new TokenJWTData(accessToken, refreshToken));
+        } catch (Exception error) {
+            error.printStackTrace();
+            return ResponseEntity.badRequest().body(error.getMessage());
+        }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity refreshToken(@RequestBody @Valid RefreshTokenData refreshTokenData) {
+        try {
+            String subject = this.tokenServiceJWT.getRefreshTokenSubject(refreshTokenData.refreshToken());
+            User user = (User) this.authenticationService.loadUserByUsername(subject);
+
+            String accessToken = this.tokenServiceJWT.getAccessToken(user);
+            String refreshToken = this.tokenServiceJWT.getRefreshToken(user);
+
+            return ResponseEntity.ok().body(new TokenJWTData(accessToken, refreshToken));
         } catch (Exception error) {
             error.printStackTrace();
             return ResponseEntity.badRequest().body(error.getMessage());
@@ -41,5 +63,7 @@ public class AuthenticationController {
 
     private record AuthenticationData(String username, String password) {}
 
-    private record TokenJWTData (String token) {}
+    private record RefreshTokenData(String refreshToken) {}
+
+    private record TokenJWTData (String accessToken, String refreshToken) {}
 }

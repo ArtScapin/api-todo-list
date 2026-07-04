@@ -5,6 +5,7 @@ import br.csi.apitodolist.service.ConsoleLogger;
 import br.csi.apitodolist.service.Observer;
 import br.csi.apitodolist.service.Subject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ public class User implements Subject {
     private String username;
 
     @NotNull
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String permission;
@@ -54,6 +56,7 @@ public class User implements Subject {
     }
 
     @Transient()
+    @JsonIgnore
     private List<Observer> loggers = new ArrayList<>();
 
     @Override

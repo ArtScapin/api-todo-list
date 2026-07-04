@@ -32,13 +32,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         String token = getToken(request);
 
         if(token != null){
-            String subject = this.tokenServiceJWT.getSubject(token);
+            try {
+                String subject = this.tokenServiceJWT.getAccessTokenSubject(token);
 
-            UserDetails userDetails = this.authenticationService.loadUserByUsername(subject);
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+                UserDetails userDetails = this.authenticationService.loadUserByUsername(subject);
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
 
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            } catch (RuntimeException ignored) {
+                SecurityContextHolder.clearContext();
+            }
         }
 
         filterChain.doFilter(request, response);
