@@ -1,9 +1,7 @@
 package br.csi.apitodolist.controller;
 
 import br.csi.apitodolist.model.list.List;
-import br.csi.apitodolist.model.workspace.Workspace;
 import br.csi.apitodolist.service.ListService;
-import br.csi.apitodolist.service.WorkspaceService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -13,24 +11,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/list")
 public class ListController {
     private final ListService service;
-    private final WorkspaceService workspaceService;
 
-    public ListController(ListService service, WorkspaceService workspaceService) {
+    public ListController(ListService service) {
         this.service = service;
-        this.workspaceService = workspaceService;
     }
 
     @PostMapping("/{id}")
     @Transactional
     public ResponseEntity<List> store(@PathVariable Long id, @RequestBody @Valid List list) {
-        Workspace workspace = workspaceService.findWorkspace(id);
-        if (workspace != null) {
-            list.setWorkspace(workspace);
-            list.setStatus(true);
-            this.service.create(list);
-            return ResponseEntity.status(201).body(list);
-        }
-        return ResponseEntity.notFound().build();
+        this.service.create(list, id);
+        return ResponseEntity.status(201).body(list);
     }
 
     @PutMapping("/{id}")
@@ -41,8 +31,7 @@ public class ListController {
 
     @GetMapping("/all/{id}")
     public ResponseEntity<java.util.List<List>> findListsByWorkspace(@PathVariable Long id) {
-        Workspace workspace = workspaceService.findWorkspace(id);
-        return ResponseEntity.status(200).body(this.service.findListsByWorkspace(workspace.getId()));
+        return ResponseEntity.status(200).body(this.service.findListsByWorkspace(id));
     }
 
     @GetMapping("/{id}")

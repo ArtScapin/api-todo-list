@@ -1,5 +1,6 @@
 package br.csi.apitodolist.service;
 
+import br.csi.apitodolist.infra.exception.ResourceNotFoundException;
 import br.csi.apitodolist.model.user.User;
 import br.csi.apitodolist.model.workspace.Workspace;
 import br.csi.apitodolist.model.workspace.WorkspaceRepository;
@@ -18,6 +19,7 @@ public class WorkspaceService {
     }
 
     public void create(Workspace workspace) {
+        workspace.setUser(this.userService.getAuthenticatedUser());
         this.repository.save(workspace);
     }
 
@@ -27,21 +29,27 @@ public class WorkspaceService {
     }
 
     public Workspace findWorkspace(Long id){
-        User user = this.userService.getAuthenticatedUser();
-        return this.repository.findByIdAndUserId(id, user.getId());
+        return this.findOwnedWorkspace(id);
     }
 
     public void deleteWorkspace(Long id) {
-        User user = this.userService.getAuthenticatedUser();
-        Workspace workspace = this.repository.findByIdAndUserId(id, user.getId());
+        Workspace workspace = this.findOwnedWorkspace(id);
         this.repository.delete(workspace);
     }
 
     public Workspace update(Workspace workspaceData, Long id) {
-        User user = this.userService.getAuthenticatedUser();
-        Workspace workspace = this.repository.findByIdAndUserId(id, user.getId());
+        Workspace workspace = this.findOwnedWorkspace(id);
         workspace.setName(workspaceData.getName());
         this.repository.save(workspace);
+        return workspace;
+    }
+
+    private Workspace findOwnedWorkspace(Long id) {
+        User user = this.userService.getAuthenticatedUser();
+        Workspace workspace = this.repository.findByIdAndUserId(id, user.getId());
+        if (workspace == null) {
+            throw new ResourceNotFoundException("Workspace");
+        }
         return workspace;
     }
 }

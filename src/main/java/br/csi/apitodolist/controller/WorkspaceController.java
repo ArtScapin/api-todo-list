@@ -1,7 +1,6 @@
 package br.csi.apitodolist.controller;
 
 import br.csi.apitodolist.model.workspace.Workspace;
-import br.csi.apitodolist.service.UserService;
 import br.csi.apitodolist.service.WorkspaceService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -13,17 +12,14 @@ import java.util.List;
 @RequestMapping("/workspace")
 public class WorkspaceController  {
     private final WorkspaceService service;
-    private final UserService userService;
 
-    public WorkspaceController(WorkspaceService service, UserService userService) {
+    public WorkspaceController(WorkspaceService service) {
         this.service = service;
-        this.userService = userService;
     }
 
     @PostMapping
     @Transactional
     public ResponseEntity<Workspace> store(@RequestBody @Valid Workspace workspace) {
-        workspace.setUser(this.userService.getAuthenticatedUser());
         this.service.create(workspace);
         return ResponseEntity.status(201).body(workspace);
     }

@@ -2,9 +2,7 @@ package br.csi.apitodolist.controller;
 
 import br.csi.apitodolist.model.item.Item;
 import br.csi.apitodolist.model.item.ItemMoveData;
-import br.csi.apitodolist.model.list.List;
 import br.csi.apitodolist.service.ItemService;
-import br.csi.apitodolist.service.ListService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -14,24 +12,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/item")
 public class ItemController {
     private final ItemService service;
-    private final ListService listService;
 
-    public ItemController(ItemService service, ListService listService) {
+    public ItemController(ItemService service) {
         this.service = service;
-        this.listService = listService;
     }
 
     @PostMapping("/{id}")
     @Transactional
     public ResponseEntity<Item> store(@PathVariable Long id, @RequestBody @Valid Item item) {
-        List list = listService.findList(id);
-        if (list != null) {
-            item.setList(list);
-            item.setStatus(false);
-            this.service.create(item);
-            return ResponseEntity.status(200).body(item);
-        }
-        return ResponseEntity.notFound().build();
+        this.service.create(item, id);
+        return ResponseEntity.status(200).body(item);
     }
 
     @PutMapping("/{id}")
@@ -54,8 +44,7 @@ public class ItemController {
 
     @GetMapping("/all/{id}")
     public ResponseEntity<java.util.List<Item>> findItemsByList(@PathVariable Long id) {
-        List list = listService.findList(id);
-        return ResponseEntity.status(200).body(this.service.findItemsByList(list.getId()));
+        return ResponseEntity.status(200).body(this.service.findItemsByList(id));
     }
 
     @GetMapping("/{id}")
