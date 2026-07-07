@@ -40,6 +40,7 @@ public class WorkspaceService {
     public Workspace update(Workspace workspaceData, Long id) {
         Workspace workspace = this.findOwnedWorkspace(id);
         workspace.setName(workspaceData.getName());
+        workspace.setKanbanViewMode(workspaceData.isKanbanViewMode());
         this.repository.save(workspace);
         return workspace;
     }

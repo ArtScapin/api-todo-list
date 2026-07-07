@@ -11,6 +11,11 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ValidationExceptionHandler {
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<Map<String, String>> handleBusinessRuleException(BusinessRuleException exception) {
+        return ResponseEntity.badRequest().body(Map.of("error", exception.getMessage()));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleResourceNotFoundException(ResourceNotFoundException exception) {
         return ResponseEntity.status(404).body(Map.of("error", exception.getMessage()));

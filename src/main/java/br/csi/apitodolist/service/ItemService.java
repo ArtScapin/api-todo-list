@@ -1,5 +1,6 @@
 package br.csi.apitodolist.service;
 
+import br.csi.apitodolist.infra.exception.BusinessRuleException;
 import br.csi.apitodolist.infra.exception.ResourceNotFoundException;
 import br.csi.apitodolist.model.item.Item;
 import br.csi.apitodolist.model.item.ItemMoveData;
@@ -9,6 +10,7 @@ import br.csi.apitodolist.model.user.User;
 import br.csi.apitodolist.model.user.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -44,25 +46,35 @@ public class ItemService {
         if (itemData.getAssignee() != null) {
             item.setAssignee(this.resolveAssignee(itemData));
         }
-        if (itemData.getList() != null && itemData.getList().getId() != null) {
-            item.setList(this.findOwnedList(itemData.getList().getId()));
-        }
         this.repository.save(item);
         return item;
     }
 
     public Item move(Long id, ItemMoveData moveData) {
         Item item = this.findOwnedItem(id);
-        br.csi.apitodolist.model.list.List list = this.findOwnedList(moveData.listId());
-        item.setList(list);
+        br.csi.apitodolist.model.list.List sourceList = item.getList();
+        br.csi.apitodolist.model.list.List destinationList = this.findOwnedList(moveData.listId());
+        if (!sourceList.getWorkspace().isKanbanViewMode()) {
+            throw new BusinessRuleException("Items can only be moved in Kanban workspaces");
+        }
+        if (!sourceList.getWorkspace().getId().equals(destinationList.getWorkspace().getId())) {
+            throw new BusinessRuleException("Items cannot be moved between different workspaces");
+        }
+        item.setStatus(this.isLastWorkspaceList(destinationList));
+        item.setList(destinationList);
         item.setPosition(moveData.position());
         this.repository.save(item);
+        this.updateListStatus(sourceList);
+        this.updateListStatus(destinationList);
         return item;
     }
 
     public Item changeStatus(Long id) {
         Item item = this.findOwnedItem(id);
         br.csi.apitodolist.model.list.List list = item.getList();
+        if (list.getWorkspace().isKanbanViewMode()) {
+            throw new BusinessRuleException("Kanban item status can only be changed by moving it to the last list");
+        }
         if (item.isStatus()) {
             item.setStatus(false);
             this.repository.save(item);
@@ -110,6 +122,27 @@ public class ItemService {
             return this.userRepository.findById(item.getAssignee().getId()).orElse(null);
         }
         return this.userService.getAuthenticatedUser();
+    }
+
+    private boolean isLastWorkspaceList(br.csi.apitodolist.model.list.List list) {
+        User user = this.userService.getAuthenticatedUser();
+        return this.listRepository.findByWorkspaceIdAndWorkspaceUserIdOrderByPositionAsc(
+                        list.getWorkspace().getId(),
+                        user.getId()
+                )
+                .stream()
+                .max(Comparator.comparing(
+                        br.csi.apitodolist.model.list.List::getPosition,
+                        Comparator.nullsFirst(Integer::compareTo)
+                ).thenComparing(br.csi.apitodolist.model.list.List::getId))
+                .map(lastList -> lastList.getId().equals(list.getId()))
+                .orElse(false);
+    }
+
+    private void updateListStatus(br.csi.apitodolist.model.list.List list) {
+        List<Item> items = this.findItemsByList(list.getId());
+        list.setStatus(items.stream().noneMatch(element -> !element.isStatus()));
+        this.listRepository.save(list);
     }
 
     private Item findOwnedItem(Long id) {

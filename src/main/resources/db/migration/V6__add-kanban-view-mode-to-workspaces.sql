@@ -1,0 +1,2 @@
+ALTER TABLE workspaces
+ADD COLUMN is_kanban_view_mode BOOLEAN NOT NULL DEFAULT FALSE;

@@ -2,6 +2,7 @@ package br.csi.apitodolist.model.workspace;
 
 import br.csi.apitodolist.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,10 @@ public class Workspace {
 
     @NotNull
     private String name;
+
+    @Column(name = "is_kanban_view_mode", nullable = false)
+    @JsonProperty("isKanbanViewMode")
+    private boolean isKanbanViewMode;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
