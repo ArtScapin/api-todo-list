@@ -1,9 +1,24 @@
-FROM maven:3.8.4-openjdk-17-slim
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 
-WORKDIR /app/api-todo-list
+WORKDIR /workspace
 
-COPY . .
+COPY pom.xml .
+RUN mvn -B dependency:go-offline
 
-CMD ["mvn", "spring-boot:run"]
+COPY src ./src
+RUN mvn -B package -DskipTests
 
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+RUN addgroup -S spring && adduser -S spring -G spring
+
+COPY --from=build /workspace/target/*.jar app.jar
+
+USER spring
+
+ENV PORT=8080
 EXPOSE 8080
+
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:-} -Dserver.port=${PORT:-8080} -jar /app/app.jar"]
